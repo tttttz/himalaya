@@ -17,6 +17,7 @@ import net.lucode.hackware.magicindicator.buildins.commonnavigator.titles.Simple
 public class IndicatorAdapter extends CommonNavigatorAdapter {
 
     private final String[] mTitles;
+    private OnIndicatorTagClickListener mOnTagClickListener;
 
     public IndicatorAdapter(Context context) {
         mTitles = context.getResources().getStringArray(R.array.indicator_name);
@@ -40,7 +41,9 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
         colorTransitionPagerTitleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //mViewPager.setCurrentItem(index);
+                if (mOnTagClickListener != null) {
+                    mOnTagClickListener.onTagClick(index);
+                }
             }
         });
         return colorTransitionPagerTitleView;
@@ -52,5 +55,13 @@ public class IndicatorAdapter extends CommonNavigatorAdapter {
         indicator.setMode(LinePagerIndicator.MODE_WRAP_CONTENT);
         indicator.setColors(Color.parseColor("#ffffff"));
         return indicator;
+    }
+
+    public void setOnIndicatorTagClickListener(OnIndicatorTagClickListener listener){
+        this.mOnTagClickListener = listener;
+    }
+
+    public interface OnIndicatorTagClickListener {
+        void onTagClick(int index);
     }
 }
