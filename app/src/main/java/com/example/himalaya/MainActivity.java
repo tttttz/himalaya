@@ -48,6 +48,10 @@ public class MainActivity extends FragmentActivity {
         //创建indicator的适配器
         mIndicatorAdapter = new IndicatorAdapter(this);
         CommonNavigator commonNavigator = new CommonNavigator(this);
+
+        //设置顶部标签自动调节相互位置（自动平分）
+        commonNavigator.setAdjustMode(true);
+
         commonNavigator.setAdapter(mIndicatorAdapter);
         //设置要显示的内容
 
