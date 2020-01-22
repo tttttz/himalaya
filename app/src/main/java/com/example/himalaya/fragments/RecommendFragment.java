@@ -16,6 +16,7 @@ import com.example.himalaya.interfaces.IRecommendViewCallback;
 import com.example.himalaya.presenters.RecommendPresenter;
 import com.example.himalaya.utils.Constants;
 import com.example.himalaya.utils.LogUtil;
+import com.example.himalaya.views.UILoader;
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants;
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest;
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack;
@@ -35,12 +36,36 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
     private RecyclerView mRecommendRV;
     private RecommendListAdapter mRecommendListAdapter;
     private RecommendPresenter mRecommendPresenter;
+    private UILoader mUILoader;
 
     @Override
-    protected View onSubViewLoad(LayoutInflater layoutInflater, ViewGroup container) {
+    protected View onSubViewLoad(final LayoutInflater layoutInflater, ViewGroup container) {
+
+        mUILoader = new UILoader(getContext()) {
+            @Override
+            protected View getSuccessView(ViewGroup container) {
+                return createSuccessView(layoutInflater, container);
+            }
+        };
+
+        //获取到逻辑层的对象
+        mRecommendPresenter = RecommendPresenter.getInstance();
+        //先要设置通知接口的注册
+        mRecommendPresenter.registerViewCallback(this);
+        //获取推荐列表
+        mRecommendPresenter.getRecommendList();
+
+        if (mUILoader.getParent() instanceof ViewGroup) {
+            ((ViewGroup) mUILoader.getParent()).removeView(mUILoader);
+        }
+
+        //返回view给界面显示
+        return mUILoader;
+    }
+
+    private View createSuccessView(LayoutInflater layoutInflater, ViewGroup container) {
         //view加载完成
         mRootView = layoutInflater.inflate(R.layout.fragment_recommend, container, false);
-
         //RecyclerView的使用
         //1.找到对应的控件
         mRecommendRV = mRootView.findViewById(R.id.recommend_list);
@@ -61,36 +86,39 @@ public class RecommendFragment extends BaseFragment implements IRecommendViewCal
         //3.设置适配器
         mRecommendListAdapter = new RecommendListAdapter();
         mRecommendRV.setAdapter(mRecommendListAdapter);
-        //获取到逻辑层的对象
-        mRecommendPresenter = RecommendPresenter.getInstance();
-        //先要设置通知接口的注册
-        mRecommendPresenter.registerViewCallback(this);
-        //获取推荐列表
-        mRecommendPresenter.getRecommendList();
-
-        //返回view给界面显示
         return mRootView;
     }
-
 
 
     //将数据展示更新到UI
     @Override
     public void onRecommendListLoad(List<Album> result) {
+        LogUtil.d(TAG, "onSuccess");
         //当获取到推荐内容时，该方法就会被调用（成功时）
         //数据回来以后更新UI
         mRecommendListAdapter.setData(result);
+        mUILoader.updateStatus(UILoader.UIStatus.SUCCESS);
     }
 
     @Override
-    public void onLoadMore(List<Album> result) {
-
+    public void onNetworkError() {
+        LogUtil.d(TAG, "onNetworkError");
+        mUILoader.updateStatus(UILoader.UIStatus.NETWORK_ERROR);
     }
 
     @Override
-    public void onRefreshMore(List<Album> result) {
-
+    public void onEmpty() {
+        LogUtil.d(TAG, "onEmpty");
+        mUILoader.updateStatus(UILoader.UIStatus.EMPTY);
     }
+
+    @Override
+    public void onLoading() {
+        LogUtil.d(TAG, "onLoading");
+        mUILoader.updateStatus(UILoader.UIStatus.LOADING);
+    }
+
+
 
     @Override
     public void onDestroyView() {

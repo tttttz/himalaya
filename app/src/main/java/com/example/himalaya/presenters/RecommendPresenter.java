@@ -51,6 +51,7 @@ public class RecommendPresenter implements IRecommendPresenter {
     public void getRecommendList() {
         //获取推荐内容
         //封装参数
+        updateLoading();
         Map<String, String> map = new HashMap<>();
         //这个参数表示一页数据返回多少条
         map.put(DTransferConstants.LIKE_COUNT, Constants.RECOMMEND_COUNT + "");
@@ -71,28 +72,44 @@ public class RecommendPresenter implements IRecommendPresenter {
                 //数据获取失败
                 LogUtil.d(TAG,"error -- >" + i);
                 LogUtil.d(TAG,"errorMsg -- >" + s);
+                handlerError();
             }
         });
     }
 
-    private void handlerRecommendResult(List<Album> albumList) {
-        //通知UI更新
+    private void handlerError() {
         if (mCallbacks != null) {
             for (IRecommendViewCallback callback : mCallbacks) {
-                callback.onRecommendListLoad(albumList);
+                callback.onNetworkError();
             }
         }
     }
 
-    @Override
-    public void pull2RefreshMore() {
-
+    private void handlerRecommendResult(List<Album> albumList) {
+        if (albumList != null) {
+            if (albumList.size() == 0) {
+                //若数据条目为0
+                for (IRecommendViewCallback callback : mCallbacks) {
+                    callback.onEmpty();
+                }
+            } else {
+                //通知UI更新
+                for (IRecommendViewCallback callback : mCallbacks) {
+                    callback.onRecommendListLoad(albumList);
+                }
+            }
+        }
     }
 
-    @Override
-    public void loadMore() {
-
+    /**
+     * 数据加载
+     */
+    private void updateLoading(){
+        for (IRecommendViewCallback callback : mCallbacks) {
+            callback.onLoading();
+        }
     }
+
 
     @Override
     public void registerViewCallback(IRecommendViewCallback callback) {
