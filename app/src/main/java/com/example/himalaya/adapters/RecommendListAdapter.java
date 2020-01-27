@@ -1,6 +1,5 @@
 package com.example.himalaya.adapters;
 
-import android.nfc.Tag;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,9 @@ import java.util.List;
 
 public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdapter.InnerHolder> {
 
-     private List<Album> mData = new ArrayList<>();
+    private static final String TAG = "RecommendListAdapter";
+    private List<Album> mData = new ArrayList<>();
+    private OnRecommendItemClickListener mItemClickListener;
 
     @NonNull
     @Override
@@ -35,6 +36,16 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
     public void onBindViewHolder(@NonNull InnerHolder holder, int position) {
         //设置数据
         holder.itemView.setTag(position);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mItemClickListener != null) {
+                    int clickPosition = (int) v.getTag();
+                    mItemClickListener.onItemClick(clickPosition, mData.get(clickPosition));
+                }
+                LogUtil.d(TAG, "holder.itemView click -- >" + v.getTag());
+            }
+        });
         holder.setData(mData.get(position));
     }
 
@@ -82,5 +93,13 @@ public class RecommendListAdapter extends RecyclerView.Adapter<RecommendListAdap
             //使用Picasso设置专辑封面
             Picasso.with(itemView.getContext()).load(album.getCoverUrlLarge()).into(albumCoverIv);
         }
+    }
+
+    public void setOnRecommendItemClickListener(OnRecommendItemClickListener listener){
+        this.mItemClickListener = listener;
+    }
+
+    public interface OnRecommendItemClickListener {
+        void onItemClick(int position, Album album);
     }
 }
