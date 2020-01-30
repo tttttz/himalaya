@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_album_item_bg">
+
+    <TextView
+        android:id="@+id/order_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:layout_centerVertical="true"
+        android:textSize="26sp"
+        android:padding="20dp"
+        android:textColor="@color/sub_text_title"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/order_text">
+
+        <TextView
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="我是大标题"
+            android:layout_marginRight="100dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="20sp"/>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:drawableLeft="@mipmap/play_info_icon"
+                android:text="14.4万"
+                android:drawablePadding="4dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/sub_text_title"/>
+
+            <TextView
+                android:drawableLeft="@mipmap/ic_sound"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="05:23"
+                android:drawablePadding="4dp"
+                android:layout_marginLeft="20dp"
+                android:textSize="12sp"
+                android:textColor="@color/sub_text_title"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2020-1-30"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:textSize="16sp"
+        android:layout_marginRight="20dp"
+        android:textColor="@color/sub_text_title"/>
+
+
+</RelativeLayout>

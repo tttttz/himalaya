@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#4d4d4d">
+    android:background="#fff4f4f4">
 
     <ImageView
         android:id="@+id/iv_large_cover"
@@ -97,6 +97,7 @@
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:text="这是标题"
+            android:ellipsize="end"
             android:maxLines="1"
             android:textColor="@color/white"/>
 
@@ -112,10 +113,12 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/album_detail_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/player_control_container">
-        
+        android:layout_below="@id/player_control_container"
+        android:overScrollMode="never">
+
     </androidx.recyclerview.widget.RecyclerView>
 
 </RelativeLayout>
