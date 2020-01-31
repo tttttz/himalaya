@@ -6,12 +6,14 @@
 
     <TextView
         android:id="@+id/order_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="38dp"
+        android:layout_height="28dp"
         android:text="0"
+        android:gravity="center"
         android:layout_centerVertical="true"
-        android:textSize="26sp"
-        android:padding="20dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="22dp"
+        android:textSize="20sp"
         android:textColor="@color/sub_text_title"/>
 
     <LinearLayout
@@ -22,14 +24,15 @@
         android:layout_toRightOf="@+id/order_text">
 
         <TextView
+            android:id="@+id/detail_item_title"
             android:textColor="@color/black"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="我是大标题"
-            android:layout_marginRight="100dp"
+            android:layout_marginRight="10dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:textSize="20sp"/>
+            android:textSize="16sp"/>
 
         <LinearLayout
             android:layout_marginTop="10dp"
@@ -38,6 +41,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/detail_item_play_count"
                 android:drawableLeft="@mipmap/play_info_icon"
                 android:text="14.4万"
                 android:drawablePadding="4dp"
@@ -47,6 +51,7 @@
                 android:textColor="@color/sub_text_title"/>
 
             <TextView
+                android:id="@+id/detail_item_duration"
                 android:drawableLeft="@mipmap/ic_sound"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,12 +66,14 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/detail_item_update_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2020-1-30"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:textSize="16sp"
+        android:layout_alignParentBottom="true"
+        android:textSize="12sp"
+        android:layout_marginBottom="15dp"
         android:layout_marginRight="20dp"
         android:textColor="@color/sub_text_title"/>
 
