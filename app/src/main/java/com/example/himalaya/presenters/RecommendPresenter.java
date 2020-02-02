@@ -77,6 +77,16 @@ public class RecommendPresenter implements IRecommendPresenter {
         });
     }
 
+    @Override
+    public void pull2RefreshMore() {
+
+    }
+
+    @Override
+    public void loadMore() {
+
+    }
+
     private void handlerError() {
         if (mCallbacks != null) {
             for (IRecommendViewCallback callback : mCallbacks) {
@@ -126,4 +136,5 @@ public class RecommendPresenter implements IRecommendPresenter {
             mCallbacks.remove(callback);
         }
     }
+
 }
