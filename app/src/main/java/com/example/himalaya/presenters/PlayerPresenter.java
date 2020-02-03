@@ -1,6 +1,5 @@
 package com.example.himalaya.presenters;
 
-import com.example.himalaya.base.BaseActivity;
 import com.example.himalaya.base.BaseApplication;
 import com.example.himalaya.interfaces.IPlayerCallBack;
 import com.example.himalaya.interfaces.IPlayerPresenter;
@@ -15,9 +14,12 @@ import com.ximalaya.ting.android.opensdk.player.service.IXmPlayerStatusListener;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, IXmPlayerStatusListener {
+
+    private List<IPlayerCallBack> mIPlayerCallBacks = new ArrayList<>();
 
     private final XmPlayerManager mPlayerManager;
 
@@ -64,7 +66,9 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void pause() {
-
+        if (mPlayerManager != null) {
+            mPlayerManager.pause();
+        }
     }
 
     @Override
@@ -99,17 +103,26 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void seekTo(int progress) {
+        //更新播放器的进度
+        mPlayerManager.seekTo(progress);
+    }
 
+    @Override
+    public boolean isPlay() {
+        //返回当前播放状态
+        return mPlayerManager.isPlaying();
     }
 
     @Override
     public void registerViewCallback(IPlayerCallBack iPlayerCallBack) {
-
+        if (!mIPlayerCallBacks.contains(iPlayerCallBack)) {
+            mIPlayerCallBacks.add(iPlayerCallBack);
+        }
     }
 
     @Override
     public void unRegisterViewCallback(IPlayerCallBack iPlayerCallBack) {
-
+        mIPlayerCallBacks.remove(iPlayerCallBack);
     }
 
     //===================广告相关的回调方法 start===========================
@@ -153,11 +166,17 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     @Override
     public void onPlayStart() {
         LogUtil.d(TAG, "onPlayStart");
+        for (IPlayerCallBack iPlayerCallBack : mIPlayerCallBacks) {
+            iPlayerCallBack.onPlayStart();
+        }
     }
 
     @Override
     public void onPlayPause() {
         LogUtil.d(TAG, "onPlayPause");
+        for (IPlayerCallBack iPlayerCallBack : mIPlayerCallBacks) {
+            iPlayerCallBack.onPlayPause();
+        }
     }
 
     @Override
@@ -197,7 +216,11 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void onPlayProgress(int currPos, int duration) {
-        LogUtil.d(TAG, "onPlayProgress...");
+        //单位是毫秒
+        for (IPlayerCallBack iPlayerCallBack : mIPlayerCallBacks) {
+            iPlayerCallBack.onProgressChange(currPos, duration);
+        }
+        LogUtil.d(TAG, "onPlayProgress..." + currPos + "duration -- >" + duration);
     }
 
     @Override
