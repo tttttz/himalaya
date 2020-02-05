@@ -3,6 +3,7 @@ package com.example.himalaya;
 
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -20,6 +21,7 @@ import java.util.List;
 public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
 
     private static final String TAG = "PlayerActivity";
+
     private ImageView mControlBtn;
     private PlayerPresenter mPlayerPresenter;
 
@@ -33,12 +35,15 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
     //用于手动调节进度条时记录进度
     private int mCurrentProgress = 0;
     private boolean mIsUserTouchProgressBar = false;
+    private ImageView mPlayNextBtn;
+    private ImageView mPlayPreBtn;
+    private TextView mTrackTitleTv;
+    private String mTrackTitleText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
-        //测试一下播放
         mPlayerPresenter = PlayerPresenter.getPlayerPresenter();
         mPlayerPresenter.registerViewCallback(this);
         initView();
@@ -92,6 +97,26 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
                 mPlayerPresenter.seekTo(mCurrentProgress);
             }
         });
+
+        mPlayPreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO:播放上一个节目
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.playPre();
+                }
+            }
+        });
+
+        mPlayNextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO:播放上一个节目
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.playNext();
+                }
+            }
+        });
     }
 
     /**
@@ -102,6 +127,12 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
         mTotalDuration = this.findViewById(R.id.track_duration);
         mCurrentPosition = this.findViewById(R.id.current_position);
         mDurationBar = this.findViewById(R.id.track_seek_bar);
+        mPlayNextBtn = this.findViewById(R.id.play_next);
+        mPlayPreBtn = this.findViewById(R.id.play_pre);
+        mTrackTitleTv = findViewById(R.id.track_title);
+        if (!TextUtils.isEmpty(mTrackTitleText)) {
+            mTrackTitleTv.setText(mTrackTitleText);
+        }
     }
 
     @Override
@@ -195,5 +226,13 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
     @Override
     public void onAdFinished() {
 
+    }
+
+    @Override
+    public void onTrackTitleUpdate(String title) {
+        this.mTrackTitleText = title;
+        if (mTrackTitleTv != null) {
+            mTrackTitleTv.setText(title);
+        }
     }
 }

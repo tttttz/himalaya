@@ -7,7 +7,7 @@
     <TextView
         android:id="@+id/track_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="30dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
@@ -84,6 +84,7 @@
                 android:src="@mipmap/sort_descending_normal"/>
 
             <ImageView
+                android:id="@+id/play_pre"
                 android:layout_width="0dp"
                 android:layout_height="20dp"
                 android:layout_weight="1"
@@ -97,6 +98,7 @@
                 android:src="@mipmap/play_normal"/>
 
             <ImageView
+                android:id="@+id/play_next"
                 android:layout_width="0dp"
                 android:layout_height="20dp"
                 android:layout_weight="1"

@@ -66,4 +66,6 @@ public interface IPlayerCallBack {
      * 广告结束
      */
     void onAdFinished();
+
+    void onTrackTitleUpdate(String title);
 }
