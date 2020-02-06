@@ -4,21 +4,26 @@ package com.example.himalaya;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.viewpager.widget.ViewPager;
+
+import com.example.himalaya.adapters.PlayerTrackPagerAdatper;
 import com.example.himalaya.base.BaseActivity;
 import com.example.himalaya.interfaces.IPlayerCallBack;
 import com.example.himalaya.presenters.PlayerPresenter;
+import com.example.himalaya.utils.LogUtil;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
+public class PlayerActivity extends BaseActivity implements IPlayerCallBack, ViewPager.OnPageChangeListener {
 
     private static final String TAG = "PlayerActivity";
 
@@ -39,6 +44,10 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
     private ImageView mPlayPreBtn;
     private TextView mTrackTitleTv;
     private String mTrackTitleText;
+    private ViewPager mTrackPageView;
+    private PlayerTrackPagerAdatper mTrackPagerAdapter;
+
+    private boolean mIsUserSlidePager = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,18 +56,20 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
         mPlayerPresenter = PlayerPresenter.getPlayerPresenter();
         mPlayerPresenter.registerViewCallback(this);
         initView();
+        //在界面初始化后再获取数据
+        mPlayerPresenter.getPlayList();
         intEvent();
-        startPlay();
+        //startPlay();会造成播放器没有准备好无法播放的bug。
     }
 
     /**
      * 开始播放
      */
-    private void startPlay() {
+/*    private void startPlay() {
         if (mPlayerPresenter != null) {
             mPlayerPresenter.play();
         }
-    }
+    }*/
 
     /**
      * 给控件设置相关的点击事件
@@ -101,7 +112,6 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
         mPlayPreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO:播放上一个节目
                 if (mPlayerPresenter != null) {
                     mPlayerPresenter.playPre();
                 }
@@ -111,10 +121,23 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
         mPlayNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO:播放上一个节目
                 if (mPlayerPresenter != null) {
                     mPlayerPresenter.playNext();
                 }
+            }
+        });
+        mTrackPageView.addOnPageChangeListener(this);
+
+        mTrackPageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action){
+                    case MotionEvent.ACTION_DOWN:
+                        mIsUserSlidePager = true;
+                        break;
+                }
+                return false;
             }
         });
     }
@@ -133,6 +156,11 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
         if (!TextUtils.isEmpty(mTrackTitleText)) {
             mTrackTitleTv.setText(mTrackTitleText);
         }
+        mTrackPageView = this.findViewById(R.id.track_pager_view);
+        //创建适配器
+        mTrackPagerAdapter = new PlayerTrackPagerAdatper();
+        mTrackPageView.setAdapter(mTrackPagerAdapter);
+        //设置适配器
     }
 
     @Override
@@ -149,14 +177,14 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
     public void onPlayStart() {
         //开始播放，修改UI层
         if (mControlBtn != null) {
-            mControlBtn.setImageResource(R.mipmap.stop_normal);
+            mControlBtn.setImageResource(R.drawable.selector_player_stop);
         }
     }
 
     @Override
     public void onPlayPause() {
         if (mControlBtn != null) {
-            mControlBtn.setImageResource(R.mipmap.play_normal);
+            mControlBtn.setImageResource(R.drawable.selector_player_play);
         }
     }
 
@@ -184,7 +212,11 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
 
     @Override
     public void onListLoaded(List<Track> list) {
-
+        //LogUtil.d(TAG, "list -->" + list.size());
+        //把数据设置到适配器中
+        if (mTrackPagerAdapter != null) {
+            mTrackPagerAdapter.setData(list);
+        }
     }
 
     @Override
@@ -229,10 +261,34 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack {
     }
 
     @Override
-    public void onTrackTitleUpdate(String title) {
-        this.mTrackTitleText = title;
+    public void onTrackUpdate(Track track, int playIndex) {
+        this.mTrackTitleText = track.getTrackTitle();
         if (mTrackTitleTv != null) {
-            mTrackTitleTv.setText(title);
+            mTrackTitleTv.setText(mTrackTitleText);
         }
+        //当节目改变时，获取当前播放器中的位置
+        //节目改变时
+        if (mTrackPageView != null) {
+            mTrackPageView.setCurrentItem(playIndex, true);
+        }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        //当页面选中时切换播放内容
+        if (mPlayerPresenter != null && mIsUserSlidePager) {
+            mPlayerPresenter.playByIndex(position);
+        }
+        mIsUserSlidePager = false;
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 }

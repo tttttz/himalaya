@@ -182,7 +182,6 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         //设置播放器列表数据
         PlayerPresenter playerPresenter = PlayerPresenter.getPlayerPresenter();
         playerPresenter.setPlayList(detailData, position);
-        //TODO:跳转到播放器界面
         Intent intent = new Intent(this, PlayerActivity.class);
         startActivity(intent);
     }

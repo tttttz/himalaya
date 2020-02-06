@@ -18,12 +18,12 @@
         android:text="这是标题内容"/>
 
     <androidx.viewpager.widget.ViewPager
+        android:id="@+id/track_pager_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/track_title"
         android:layout_marginTop="30dp"
-        android:layout_marginBottom="100dp"
-        android:background="#f34214">
+        android:layout_marginBottom="100dp">
 
     </androidx.viewpager.widget.ViewPager>
 
@@ -88,21 +88,21 @@
                 android:layout_width="0dp"
                 android:layout_height="20dp"
                 android:layout_weight="1"
-                android:src="@mipmap/previous_normal"/>
+                android:src="@drawable/selector_player_pre"/>
 
             <ImageView
                 android:id="@+id/play_or_pause_btn"
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_weight="1"
-                android:src="@mipmap/play_normal"/>
+                android:src="@drawable/selector_player_play"/>
 
             <ImageView
                 android:id="@+id/play_next"
                 android:layout_width="0dp"
                 android:layout_height="20dp"
                 android:layout_weight="1"
-                android:src="@mipmap/next_normal"/>
+                android:src="@drawable/selector_player_next"/>
 
             <ImageView
                 android:layout_width="0dp"
