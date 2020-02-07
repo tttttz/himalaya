@@ -1,5 +1,8 @@
 package com.example.himalaya.presenters;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import com.example.himalaya.base.BaseApplication;
 import com.example.himalaya.interfaces.IPlayerCallBack;
 import com.example.himalaya.interfaces.IPlayerPresenter;
@@ -18,6 +21,11 @@ import com.ximalaya.ting.android.opensdk.player.service.XmPlayerException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST_LOOP;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_RANDOM;
+import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE_LOOP;
+
 public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, IXmPlayerStatusListener {
 
     private List<IPlayerCallBack> mIPlayerCallBacks = new ArrayList<>();
@@ -25,15 +33,32 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     private final XmPlayerManager mPlayerManager;
 
     private static final String TAG = "PlayerPresenter";
-    private Track mCurrenTrack;
+    private Track mCurrentTrack;
     private int mCurrentIndex = 0;
+    private final SharedPreferences mPlayModeSp;
 
+    private XmPlayListControl.PlayMode mCurrentPlayMode = PLAY_MODEL_LIST;
+
+    //PLAY_MODE_LIST
+    //PLAY_MODE_LIST_LOOP
+    //PLAY_MODE_RANDOM
+    //PLAY_MODE_SINGLE_LOOP
+    private static final int PLAY_MODEL_LIST_INT = 0;
+    private static final int PLAY_MODEL_LIST_LOOP_INT = 1;
+    private static final int PLAY_MODEL_RANDOM_INT = 2;
+    private static final int PLAY_MODEL_SINGLE_LOOP_INT = 3;
+
+    //sp's key and name
+    public static final String PLAY_MODEL_SP_NAME = "PlayMod";
+    public static final String PLAY_MODEL_SP_KEY = "currentPlayMod";
     private PlayerPresenter(){
         mPlayerManager = XmPlayerManager.getInstance(BaseApplication.getAppContext());
         //广告相关接口
         mPlayerManager.addAdsStatusListener(this);
         //注册播放器相关的接口
         mPlayerManager.addPlayerStatusListener(this);
+        //需要记录当前的播放模式
+        mPlayModeSp = BaseApplication.getAppContext().getSharedPreferences(PLAY_MODEL_SP_NAME, Context.MODE_PRIVATE);
     }
 
     private static PlayerPresenter sPlayerPresenter;
@@ -54,7 +79,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         if (mPlayerManager != null) {
             mPlayerManager.setPlayList(list, playIndex);
             isPlayListSet = true;
-            mCurrenTrack = list.get(playIndex);
+            mCurrentTrack = list.get(playIndex);
             mCurrentIndex = playIndex;
         } else {
             LogUtil.d(TAG, "mPlayerManager is null");
@@ -99,7 +124,44 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void switchPlayMode(XmPlayListControl.PlayMode mode) {
+        mCurrentPlayMode = mode;
+        if (mPlayerManager != null) {
+            mPlayerManager.setPlayMode(mode);
+            for (IPlayerCallBack iPlayerCallBack : mIPlayerCallBacks) {
+                iPlayerCallBack.onPlayModeChange(mode);
+            }
+            SharedPreferences.Editor editor = mPlayModeSp.edit();
+            editor.putInt(PLAY_MODEL_SP_KEY, getIntByPlayMode(mode));
+            editor.commit();
+        }
+    }
 
+    private int getIntByPlayMode(XmPlayListControl.PlayMode mode){
+        switch(mode){
+            case PLAY_MODEL_SINGLE_LOOP:
+                return PLAY_MODEL_SINGLE_LOOP_INT;
+            case PLAY_MODEL_LIST:
+                return PLAY_MODEL_LIST_INT;
+            case PLAY_MODEL_RANDOM:
+                return PLAY_MODEL_RANDOM_INT;
+            case PLAY_MODEL_LIST_LOOP:
+                return PLAY_MODEL_LIST_LOOP_INT;
+        }
+        return PLAY_MODEL_LIST_INT;
+    }
+
+    private XmPlayListControl.PlayMode getModeByInt (int index){
+        switch(index){
+            case PLAY_MODEL_SINGLE_LOOP_INT:
+                return PLAY_MODEL_SINGLE_LOOP;
+            case PLAY_MODEL_LIST_INT:
+                return PLAY_MODEL_LIST;
+            case PLAY_MODEL_RANDOM_INT:
+                return PLAY_MODEL_RANDOM;
+            case PLAY_MODEL_LIST_LOOP_INT:
+                return PLAY_MODEL_LIST_LOOP;
+        }
+        return PLAY_MODEL_LIST;
     }
 
     @Override
@@ -134,7 +196,10 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     @Override
     public void registerViewCallback(IPlayerCallBack iPlayerCallBack) {
-        iPlayerCallBack.onTrackUpdate(mCurrenTrack, mCurrentIndex);
+        iPlayerCallBack.onTrackUpdate(mCurrentTrack, mCurrentIndex);
+        int modeIndex = mPlayModeSp.getInt(PLAY_MODEL_SP_KEY, PLAY_MODEL_LIST_INT);
+        mCurrentPlayMode = getModeByInt(modeIndex);
+        iPlayerCallBack.onPlayModeChange(mCurrentPlayMode);
         if (!mIPlayerCallBacks.contains(iPlayerCallBack)) {
             mIPlayerCallBacks.add(iPlayerCallBack);
         }
@@ -212,6 +277,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
     @Override
     public void onSoundPrepared() {
         LogUtil.d(TAG, "onSoundPrepared");
+        mPlayerManager.setPlayMode(mCurrentPlayMode);
         if (mPlayerManager.getPlayerStatus() == PlayerConstants.STATE_PREPARED) {
             //播放器准备完成，可以播放节目
             mPlayerManager.play();
@@ -228,10 +294,10 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         mCurrentIndex = mPlayerManager.getCurrentIndex();
         if (curModel instanceof Track) {
             Track currentTrack = (Track) curModel;
-            mCurrenTrack = currentTrack;
+            mCurrentTrack = currentTrack;
             LogUtil.d(TAG, "title == >" + currentTrack.getTrackTitle());
             for (IPlayerCallBack iPlayerCallBack : mIPlayerCallBacks) {
-                iPlayerCallBack.onTrackUpdate(mCurrenTrack, mCurrentIndex);
+                iPlayerCallBack.onTrackUpdate(mCurrentTrack, mCurrentIndex);
             }
         }
     }
