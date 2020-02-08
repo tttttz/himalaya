@@ -2,12 +2,17 @@ package com.example.himalaya;
 
 
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -18,6 +23,7 @@ import com.example.himalaya.base.BaseActivity;
 import com.example.himalaya.interfaces.IPlayerCallBack;
 import com.example.himalaya.presenters.PlayerPresenter;
 import com.example.himalaya.utils.LogUtil;
+import com.example.himalaya.views.SobPopWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
@@ -69,6 +75,14 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         sPlayModeRule.put(PLAY_MODEL_RANDOM, PLAY_MODEL_SINGLE_LOOP);
         sPlayModeRule.put(PLAY_MODEL_SINGLE_LOOP, PLAY_MODEL_LIST);
     }
+
+    private View mPlayListBtn;
+    private SobPopWindow mSobPopWindow;
+    private ValueAnimator mEnterBgAnimator;
+    private ValueAnimator mOutBgAnimation;
+
+    public final int BG_ANIMATION = 500;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +94,31 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         mPlayerPresenter.getPlayList();
         intEvent();
         //startPlay();会造成播放器没有准备好无法播放的bug。
+        initBgAnimation();
+    }
+
+    //背景渐变动画
+    private void initBgAnimation() {
+        mEnterBgAnimator = ValueAnimator.ofFloat(1.0f, 0.7f);
+        mEnterBgAnimator.setDuration(BG_ANIMATION);
+        mEnterBgAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float alphaValue = (float)animation.getAnimatedValue();
+                //设置一下透明度
+                updateBgAlpha(alphaValue);
+            }
+        });
+        mOutBgAnimation = ValueAnimator.ofFloat(0.7f, 1.0f);
+        mOutBgAnimation.setDuration(BG_ANIMATION);
+        mOutBgAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float alphaValue = (float)animation.getAnimatedValue();
+                //设置一下透明度
+                updateBgAlpha(alphaValue);
+            }
+        });
     }
 
     /**
@@ -172,8 +211,31 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
                 }
             }
         });
+        mPlayListBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //展示播放列表
+                mSobPopWindow.showAtLocation(v, Gravity.BOTTOM, 0, 0);
+                //设置背景透明度变化的过程
+                mEnterBgAnimator.start();
+            }
+        });
+        mSobPopWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                //pop窗体消失后，背景透明度恢复
+                mOutBgAnimation.start();
+            }
+        });
     }
 
+    //设置背景透明度
+    public void updateBgAlpha(float alpha){
+        Window window = getWindow();
+        WindowManager.LayoutParams attributes = window.getAttributes();
+        attributes.alpha = alpha;
+        window.setAttributes(attributes);
+    }
     /**
      * 根据当前状态更新播放模式图标
      */
@@ -217,6 +279,9 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         mTrackPageView.setAdapter(mTrackPagerAdapter);
         //切换播放模式的按钮
         mPlayModeSwitchBtn = this.findViewById(R.id.player_mode_switch_btn);
+        //播放列表
+        mPlayListBtn = this.findViewById(R.id.player_list);
+        mSobPopWindow = new SobPopWindow();
     }
 
     @Override
