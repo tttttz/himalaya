@@ -7,13 +7,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupWindow;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.himalaya.R;
+import com.example.himalaya.adapters.PlayListAdapter;
 import com.example.himalaya.base.BaseApplication;
+import com.ximalaya.ting.android.opensdk.model.track.Track;
+import com.ximalaya.ting.android.opensdk.model.track.TrackList;
+
+import java.util.List;
 
 public class SobPopWindow extends PopupWindow {
 
     private final View mPopView;
     private View mCloseBtn;
+    private RecyclerView mTracksList;
+    private PlayListAdapter mPlayListAdapter;
 
     public SobPopWindow(){
         //设置宽高
@@ -34,6 +44,11 @@ public class SobPopWindow extends PopupWindow {
 
     private void initView(){
         mCloseBtn = mPopView.findViewById(R.id.play_list_close_btn);
+        mTracksList = mPopView.findViewById(R.id.play_list_rv);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(BaseApplication.getAppContext());
+        mTracksList.setLayoutManager(layoutManager);
+        mPlayListAdapter = new PlayListAdapter();
+        mTracksList.setAdapter(mPlayListAdapter);
     }
 
     private void initEvent() {
@@ -44,5 +59,30 @@ public class SobPopWindow extends PopupWindow {
                 SobPopWindow.this.dismiss();
             }
         });
+    }
+
+    /**
+     * 给适配器设置数据
+     * @param data
+     */
+    public void setListData(List<Track> data){
+        if (mPlayListAdapter != null) {
+            mPlayListAdapter.setData(data);
+        }
+    }
+
+    public void setCurrentPosition(int position){
+        if (mPlayListAdapter != null) {
+            mPlayListAdapter.setCurrentPosition(position);
+            mTracksList.scrollToPosition(position);
+        }
+    }
+
+    public void setPlayListItemClickListener(PlayListItemClickListener listener){
+        mPlayListAdapter.setOnItemClickListener(listener);
+    }
+
+    public interface PlayListItemClickListener {
+        void onClick(int position);
     }
 }

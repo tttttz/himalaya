@@ -22,7 +22,6 @@ import com.example.himalaya.adapters.PlayerTrackPagerAdatper;
 import com.example.himalaya.base.BaseActivity;
 import com.example.himalaya.interfaces.IPlayerCallBack;
 import com.example.himalaya.presenters.PlayerPresenter;
-import com.example.himalaya.utils.LogUtil;
 import com.example.himalaya.views.SobPopWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
@@ -35,7 +34,6 @@ import java.util.Map;
 import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST;
 import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_LIST_LOOP;
 import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_RANDOM;
-import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE;
 import static com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl.PlayMode.PLAY_MODEL_SINGLE_LOOP;
 
 public class PlayerActivity extends BaseActivity implements IPlayerCallBack, ViewPager.OnPageChangeListener {
@@ -92,7 +90,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         mPlayerPresenter.registerViewCallback(this);
         //在界面初始化后再获取数据
         mPlayerPresenter.getPlayList();
-        intEvent();
+        initEvent();
         //startPlay();会造成播放器没有准备好无法播放的bug。
         initBgAnimation();
     }
@@ -134,7 +132,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
      * 给控件设置相关的点击事件
      */
     @SuppressLint("ClickableViewAccessibility")
-    private void intEvent() {
+    private void initEvent() {
         mControlBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,6 +223,13 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
             public void onDismiss() {
                 //pop窗体消失后，背景透明度恢复
                 mOutBgAnimation.start();
+            }
+        });
+
+        mSobPopWindow.setPlayListItemClickListener(new SobPopWindow.PlayListItemClickListener() {
+            @Override
+            public void onClick(int position) {
+                mPlayerPresenter.playByIndex(position);
             }
         });
     }
@@ -338,6 +343,10 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         if (mTrackPagerAdapter != null) {
             mTrackPagerAdapter.setData(list);
         }
+        //数据回来后也要给播放列表
+        if (mSobPopWindow != null) {
+            mSobPopWindow.setListData(list);
+        }
     }
 
     @Override
@@ -392,6 +401,9 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         //节目改变时
         if (mTrackPageView != null) {
             mTrackPageView.setCurrentItem(playIndex, true);
+        }
+        if (mSobPopWindow != null) {
+            mSobPopWindow.setCurrentPosition(playIndex);
         }
     }
 

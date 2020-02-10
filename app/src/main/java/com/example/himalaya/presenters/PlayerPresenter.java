@@ -76,6 +76,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
 
     private boolean isPlayListSet = false;
     public void setPlayList(List<Track> list, int playIndex){
+        LogUtil.d(TAG, "list.size -- >" + list.size());
         if (mPlayerManager != null) {
             mPlayerManager.setPlayList(list, playIndex);
             isPlayListSet = true;
@@ -296,6 +297,7 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
             Track currentTrack = (Track) curModel;
             mCurrentTrack = currentTrack;
             LogUtil.d(TAG, "title == >" + currentTrack.getTrackTitle());
+            LogUtil.d(TAG, " mCurrentIndex== >" + mCurrentIndex);
             for (IPlayerCallBack iPlayerCallBack : mIPlayerCallBacks) {
                 iPlayerCallBack.onTrackUpdate(mCurrentTrack, mCurrentIndex);
             }
