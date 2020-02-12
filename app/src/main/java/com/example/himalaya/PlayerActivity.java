@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.viewpager.widget.ViewPager;
 
@@ -201,12 +202,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         mPlayModeSwitchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //根据当前的mode获取下一个mode
-                XmPlayListControl.PlayMode playMode = sPlayModeRule.get(mCurrentMode);
-                //修改播放模式
-                if (mPlayerPresenter != null) {
-                    mPlayerPresenter.switchPlayMode(playMode);
-                }
+                switchPlayMode();
             }
         });
         mPlayListBtn.setOnClickListener(new View.OnClickListener() {
@@ -228,10 +224,37 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
 
         mSobPopWindow.setPlayListItemClickListener(new SobPopWindow.PlayListItemClickListener() {
             @Override
-            public void onClick(int position) {
+            public void onItemClick(int position) {
                 mPlayerPresenter.playByIndex(position);
             }
         });
+
+        mSobPopWindow.setPlayListActionListener(new SobPopWindow.PlayListActionListener() {
+            @Override
+            public void onPlayModeClick() {
+                //点击切换播放模式
+                switchPlayMode();
+            }
+
+            @Override
+            public void onOrderClick() {
+                //点击切换播放顺序
+                Toast.makeText(PlayerActivity.this, "切换列表顺序", Toast.LENGTH_SHORT).show();
+                mSobPopWindow.updateOrderIcon(!testOrder);
+                testOrder = !testOrder;
+            }
+        });
+    }
+
+    private boolean testOrder = true;
+
+    private void switchPlayMode() {
+        //根据当前的mode获取下一个mode
+        XmPlayListControl.PlayMode playMode = sPlayModeRule.get(mCurrentMode);
+        //修改播放模式
+        if (mPlayerPresenter != null) {
+            mPlayerPresenter.switchPlayMode(playMode);
+        }
     }
 
     //设置背景透明度
@@ -352,6 +375,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
     @Override
     public void onPlayModeChange(XmPlayListControl.PlayMode playMode) {
         mCurrentMode = playMode;
+        //更新pop中的播放模式
+        mSobPopWindow.updatePlayMode(mCurrentMode);
         updatePlayModeBtnImg();
     }
 

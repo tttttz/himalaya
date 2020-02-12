@@ -4,11 +4,64 @@
     android:layout_height="match_parent"
     android:background="@drawable/shape_play_list_bg">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/play_list_controller_container"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"></LinearLayout>
+        android:layout_height="50dp">
+
+        <LinearLayout
+            android:id="@+id/play_list_play_mode_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/play_list_play_mode_iv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/selector_player_mode_list_order"/>
+
+            <TextView
+                android:id="@+id/play_list_play_mode_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="顺序播放"
+                android:textSize="16sp"
+                android:textColor="@color/second_color"
+                android:layout_marginLeft="6dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/play_list_order_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp">
+
+            <ImageView
+                android:id="@+id/play_list_play_order_iv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/selector_player_mode_list_order"/>
+
+            <TextView
+                android:id="@+id/play_list_play_order_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="顺序"
+                android:textSize="16sp"
+                android:textColor="@color/second_color"
+                android:layout_marginLeft="6dp"/>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/play_list_rv"

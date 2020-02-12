@@ -35,7 +35,7 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.InnerH
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mItemClickListener.onClick(position);
+                mItemClickListener.onItemClick(position);
             }
         });
         //设置数据
