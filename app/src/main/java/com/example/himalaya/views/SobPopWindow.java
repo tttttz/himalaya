@@ -125,10 +125,10 @@ public class SobPopWindow extends PopupWindow {
         updatePlayModeBtnImg(currentMode);
     }
 
-    public void updateOrderIcon(boolean isOrder){
-        mOrderIcon.setImageResource(isOrder ?
+    public void updateOrderIcon(boolean isReverse){
+        mOrderIcon.setImageResource(!isReverse ?
                 R.drawable.selector_player_mode_list_order : R.drawable.selector_player_mode_list_reverse);
-        mOrderText.setText(BaseApplication.getAppContext().getString(isOrder? R.string.order_text: R.string.reverse_text) );
+        mOrderText.setText(BaseApplication.getAppContext().getString(!isReverse? R.string.order_text: R.string.reverse_text) );
     }
 
     private void updatePlayModeBtnImg(XmPlayListControl.PlayMode playMode) {

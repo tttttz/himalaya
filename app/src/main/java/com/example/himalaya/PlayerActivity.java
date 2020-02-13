@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.viewpager.widget.ViewPager;
 
@@ -138,7 +137,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
             @Override
             public void onClick(View v) {
                 //若当前为播放，则暂停
-                if (mPlayerPresenter.isPlay()){
+                if (mPlayerPresenter.isPlaying()){
                     mPlayerPresenter.pause();
                 } else {
                     //若当前为暂停，则播放
@@ -239,9 +238,10 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
             @Override
             public void onOrderClick() {
                 //点击切换播放顺序
-                Toast.makeText(PlayerActivity.this, "切换列表顺序", Toast.LENGTH_SHORT).show();
-                mSobPopWindow.updateOrderIcon(!testOrder);
-                testOrder = !testOrder;
+                //Toast.makeText(PlayerActivity.this, "切换列表顺序", Toast.LENGTH_SHORT).show();
+                if (mPlayerPresenter != null) {
+                    mPlayerPresenter.reversePlayList();
+                }
             }
         });
     }
@@ -416,6 +416,11 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
 
     }
 
+    /**
+     * 当前播放的声音改变时，更改播放器和弹出的播放列表
+     * @param track
+     * @param playIndex
+     */
     @Override
     public void onTrackUpdate(Track track, int playIndex) {
         this.mTrackTitleText = track.getTrackTitle();
@@ -430,6 +435,11 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
         if (mSobPopWindow != null) {
             mSobPopWindow.setCurrentPosition(playIndex);
         }
+    }
+
+    @Override
+    public void updateListOrder(boolean isReverse) {
+        mSobPopWindow.updateOrderIcon(isReverse);
     }
 
     @Override

@@ -41,17 +41,18 @@
             android:id="@+id/detail_play_control"
             android:layout_centerVertical="true"
             android:src="@mipmap/play_icon"
-            android:layout_marginLeft="10dp"
-            android:layout_width="19dp"
-            android:layout_height="19dp" />
+            android:padding="10dp"
+            android:layout_width="39dp"
+            android:layout_height="39dp" />
 
         <TextView
+            android:id="@+id/play_control_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="继续播放"
             android:layout_centerVertical="true"
             android:textSize="14sp"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="2dp"
             android:layout_toRightOf="@+id/detail_play_control"/>
 
         <TextView
