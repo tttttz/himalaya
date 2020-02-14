@@ -69,9 +69,11 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         //播放列表的Presenter
         mPlayerPresenter = PlayerPresenter.getPlayerPresenter();
         mPlayerPresenter.registerViewCallback(this);
-
+        updatePlayState(mPlayerPresenter.isPlaying());
         initListener();
     }
+
+
 
     private void initListener() {
         if (mPlayControlBtn != null) {
@@ -220,27 +222,29 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     @Override
     public void onPlayStart() {
         //修改图标为暂停且文字为正在播放
-        if (mPlayControlBtn != null && mPlayControlTips != null) {
-            mPlayControlBtn.setImageResource(R.drawable.selector_play_control_pause);
-            mPlayControlTips.setText(R.string.playing_tips_text);
-        }
+        updatePlayState(true);
     }
+
 
     @Override
     public void onPlayPause() {
-        if (mPlayControlBtn != null && mPlayControlTips != null) {
-            mPlayControlBtn.setImageResource(R.drawable.selector_play_control_play);
-            mPlayControlTips.setText(R.string.pause_tips_text);
-        }
+        updatePlayState(false);
 
     }
 
+    /**
+     * 根据播放状态修改图标的文字
+     * @param playing
+     */
+    private void updatePlayState(boolean playing) {
+        if (mPlayControlBtn != null && mPlayControlTips != null) {
+            mPlayControlBtn.setImageResource(playing ? R.drawable.selector_play_control_pause : R.drawable.selector_play_control_play);
+            mPlayControlTips.setText(playing ? R.string.playing_tips_text : R.string.pause_tips_text);
+        }
+    }
     @Override
     public void onPlayStop() {
-        if (mPlayControlBtn != null && mPlayControlTips != null) {
-            mPlayControlBtn.setImageResource(R.drawable.selector_play_control_play);
-            mPlayControlTips.setText(R.string.pause_tips_text);
-        }
+        updatePlayState(false);
     }
 
     @Override
