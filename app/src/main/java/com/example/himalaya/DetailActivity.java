@@ -229,7 +229,6 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     @Override
     public void onPlayPause() {
         updatePlayState(false);
-
     }
 
     /**
