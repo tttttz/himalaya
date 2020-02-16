@@ -9,15 +9,18 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.himalaya.adapters.DetailListAdapter;
 import com.example.himalaya.base.BaseActivity;
+import com.example.himalaya.base.BaseApplication;
 import com.example.himalaya.interfaces.IAlbumDetailViewCallback;
 import com.example.himalaya.interfaces.IPlayerCallBack;
 import com.example.himalaya.presenters.AlbumDetailPresenter;
@@ -26,6 +29,9 @@ import com.example.himalaya.utils.ImageBlur;
 import com.example.himalaya.utils.LogUtil;
 import com.example.himalaya.views.RoundRectImageView;
 import com.example.himalaya.views.UILoader;
+import com.lcodecore.tkrefreshlayout.RefreshListenerAdapter;
+import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
+import com.lcodecore.tkrefreshlayout.header.bezierlayout.BezierLayout;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
@@ -53,7 +59,11 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     private ImageView mPlayControlBtn;
     private TextView mPlayControlTips;
     private PlayerPresenter mPlayerPresenter;
-
+    private List<Track> mCurrentTrack = null;
+    private final static int DEFAULT_PLAY_POSITION = 0;
+    private TwinklingRefreshLayout mRefreshLayout;
+    private boolean mIsLoadMore = false;
+    private String mCurrentTrackTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,15 +90,37 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
             mPlayControlBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //控制播放状态
-                    if (mPlayerPresenter.isPlaying()) {
-                        //正在播放
-                        mPlayerPresenter.pause();
-                    } else {
-                        mPlayerPresenter.play();
+                    if (mPlayerPresenter != null) {
+                        //判断播放器是否有播放列表
+                        boolean hasPlayList = mPlayerPresenter.hasPlayList();
+                        if (hasPlayList) {
+                            handlePlayControl();
+                        } else {
+                            handleNoPlayList();
+                        }
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * 当播放器无内容时的处理
+     */
+    private void handleNoPlayList() {
+       mPlayerPresenter.setPlayList(mCurrentTrack, DEFAULT_PLAY_POSITION);
+    }
+
+    /**
+     * 播放器有内容的处理
+     */
+    private void handlePlayControl() {
+        //控制播放状态
+        if (mPlayerPresenter.isPlaying()) {
+            //正在播放
+            mPlayerPresenter.pause();
+        } else {
+            mPlayerPresenter.play();
         }
     }
 
@@ -113,12 +145,15 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         //播放控制图标
         mPlayControlBtn = this.findViewById(R.id.detail_play_control);
         mPlayControlTips = this.findViewById(R.id.play_control_tv);
+        mPlayControlTips.setSelected(true);
     }
 
     private View createSuccessView(ViewGroup container) {
         View detailListView = LayoutInflater.from(this).inflate(R.layout.item_detail_list, container, false);
         //RecyclerView使用步骤
         mDetailList = detailListView.findViewById(R.id.album_detail_list);
+
+        mRefreshLayout = detailListView.findViewById(R.id.refresh_layout);
         //设置布局
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mDetailList.setLayoutManager(layoutManager);
@@ -136,11 +171,44 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
             }
         });
         mDetailListAdapter.setItemClickListener(this);
+
+        BezierLayout headerView = new BezierLayout(this);
+        mRefreshLayout.setHeaderView(headerView);
+        mRefreshLayout.setMaxHeadHeight(140);
+        mRefreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
+            @Override
+            public void onRefresh(TwinklingRefreshLayout refreshLayout) {
+                super.onRefresh(refreshLayout);
+                BaseApplication.getHandler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(DetailActivity.this, "刷新成功", Toast.LENGTH_SHORT).show();
+                        mRefreshLayout.finishRefreshing();
+                    }
+                }, 2000);
+
+            }
+
+            @Override
+            public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
+                super.onLoadMore(refreshLayout);
+                //todo:去加载更多内容
+                if (mAlbumDetailPresenter != null) {
+                    mAlbumDetailPresenter.loadMore();
+                    mIsLoadMore = true;
+                }
+            }
+        });
         return detailListView;
     }
 
     @Override
     public void onDetailListLoaded(List<Track> tracks) {
+        if (mIsLoadMore && mRefreshLayout != null) {
+            mRefreshLayout.finishLoadmore();
+            mIsLoadMore = false;
+        }
+        this.mCurrentTrack = tracks;
         //判断数据结果，根据结果控制UI显示
         if (tracks == null || tracks.size() == 0){
             if (mUiLoader != null){
@@ -238,7 +306,13 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     private void updatePlayState(boolean playing) {
         if (mPlayControlBtn != null && mPlayControlTips != null) {
             mPlayControlBtn.setImageResource(playing ? R.drawable.selector_play_control_pause : R.drawable.selector_play_control_play);
-            mPlayControlTips.setText(playing ? R.string.playing_tips_text : R.string.pause_tips_text);
+            if (!playing) {
+                mPlayControlTips.setText(R.string.click_play_tips_text);
+            } else {
+                if (!TextUtils.isEmpty(mCurrentTrackTitle)) {
+                    mPlayControlTips.setText(mCurrentTrackTitle);
+                }
+            }
         }
     }
     @Override
@@ -288,7 +362,12 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     @Override
     public void onTrackUpdate(Track track, int playIndex) {
-
+        if (track != null) {
+            mCurrentTrackTitle = track.getTrackTitle();
+            if (!TextUtils.isEmpty(mCurrentTrackTitle) && mPlayControlTips != null) {
+                mPlayControlTips.setText(mCurrentTrackTitle);
+            }
+        }
     }
 
     @Override

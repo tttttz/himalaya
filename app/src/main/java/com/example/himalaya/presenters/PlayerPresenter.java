@@ -355,5 +355,10 @@ public class PlayerPresenter implements IPlayerPresenter, IXmAdsStatusListener, 
         LogUtil.d(TAG, "onError e-->" + e);
         return false;
     }
+
+    //判断是否有播放列表的节目列表
+    public boolean hasPlayList() {
+        return isPlayListSet;
+    }
     //===================播放器相关回调方法 end===========================
 }
