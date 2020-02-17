@@ -326,7 +326,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
     public void onPlayStart() {
         //开始播放，修改UI层
         if (mControlBtn != null) {
-            mControlBtn.setImageResource(R.drawable.selector_player_stop);
+            mControlBtn.setImageResource(R.drawable.selector_player_pause);
         }
     }
 

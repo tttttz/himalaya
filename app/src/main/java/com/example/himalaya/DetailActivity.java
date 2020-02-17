@@ -271,6 +271,20 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
     }
 
     @Override
+    public void onLoadMoreFinished(int size) {
+        if (size > 0) {
+            Toast.makeText(this, "成功加载" + size + "条节目", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "没有更多节目", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRefreshMoreFinished(int size) {
+
+    }
+
+    @Override
     public void onRetryClick() {
         //表示用户网络不佳时点击重新加载
         if (mAlbumDetailPresenter != null) {
