@@ -17,4 +17,5 @@
     <string name="order_text">顺序</string>
     <string name="reverse_text">逆序</string>
     <string name="click_play_tips_text">点击播放</string>
+    <string name="listen_as_you_like_text">随便听听</string>
 </resources>

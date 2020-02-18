@@ -67,5 +67,7 @@ public interface IPlayerPresenter extends IBasePresenter<IPlayerCallBack> {
      */
     void reversePlayList();
 
+    void playByAlbumId(long id);
+
 
 }

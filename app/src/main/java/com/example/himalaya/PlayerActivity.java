@@ -22,6 +22,7 @@ import com.example.himalaya.adapters.PlayerTrackPagerAdatper;
 import com.example.himalaya.base.BaseActivity;
 import com.example.himalaya.interfaces.IPlayerCallBack;
 import com.example.himalaya.presenters.PlayerPresenter;
+import com.example.himalaya.utils.LogUtil;
 import com.example.himalaya.views.SobPopWindow;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
@@ -423,6 +424,10 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
      */
     @Override
     public void onTrackUpdate(Track track, int playIndex) {
+        if (track == null) {
+            LogUtil.d(TAG, "onTrackUpdate --> track null");
+            return;
+        }
         this.mTrackTitleText = track.getTrackTitle();
         if (mTrackTitleTv != null) {
             mTrackTitleTv.setText(mTrackTitleText);

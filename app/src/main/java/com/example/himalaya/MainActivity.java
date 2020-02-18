@@ -4,6 +4,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,9 +14,11 @@ import com.example.himalaya.adapters.IndicatorAdapter;
 import com.example.himalaya.adapters.MainContentAdapter;
 import com.example.himalaya.interfaces.IPlayerCallBack;
 import com.example.himalaya.presenters.PlayerPresenter;
+import com.example.himalaya.presenters.RecommendPresenter;
 import com.example.himalaya.utils.LogUtil;
 import com.example.himalaya.views.RoundRectImageView;
 import com.squareup.picasso.Picasso;
+import com.ximalaya.ting.android.opensdk.model.album.Album;
 import com.ximalaya.ting.android.opensdk.model.track.Track;
 import com.ximalaya.ting.android.opensdk.player.service.XmPlayListControl;
 
@@ -36,6 +39,8 @@ public class MainActivity extends FragmentActivity implements IPlayerCallBack {
     private TextView mSubTitle;
     private ImageView mPlayControl;
     private PlayerPresenter mPlayerPresenter;
+    private View mPlayControlItem;
+    private View mSearchBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +71,52 @@ public class MainActivity extends FragmentActivity implements IPlayerCallBack {
             @Override
             public void onClick(View v) {
                 if (mPlayerPresenter != null) {
-                    if (mPlayerPresenter.isPlaying()) {
-                        mPlayerPresenter.pause();
+                    boolean hasPlayList = mPlayerPresenter.hasPlayList();
+                    if (!hasPlayList) {
+                        //没有设置过播放列表则默认播放第一个推荐专辑
+                        playFirstRecommend();
                     } else {
-                        mPlayerPresenter.play();
+                        if (mPlayerPresenter.isPlaying()) {
+                            mPlayerPresenter.pause();
+                        } else {
+                            mPlayerPresenter.play();
+                        }
                     }
                 }
             }
         });
+
+        mPlayControlItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean hasPlayList = mPlayerPresenter.hasPlayList();
+                if (!hasPlayList) {
+                    //没有设置过播放列表则默认播放第一个推荐专辑
+                    playFirstRecommend();
+                }
+                startActivity(new Intent(MainActivity.this, PlayerActivity.class));
+            }
+        });
+
+        mSearchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /**
+     * 播放第一个推荐的内容
+     */
+    private void playFirstRecommend() {
+        List<Album> currentRecommend = RecommendPresenter.getInstance().getCurrentRecommend();
+        if (currentRecommend != null && currentRecommend.size() > 0) {
+            Album album = currentRecommend.get(0);
+            long albumId = album.getId();
+            mPlayerPresenter.playByAlbumId(albumId);
+        }
     }
 
     private void initView() {
@@ -107,7 +150,11 @@ public class MainActivity extends FragmentActivity implements IPlayerCallBack {
         mHeaderTitle = this.findViewById(R.id.main_head_title);
         mSubTitle = this.findViewById(R.id.main_sub_title);
         mPlayControl = this.findViewById(R.id.main_play_control);
+        //点击进入播放器
+        mPlayControlItem = this.findViewById(R.id.main_play_control_item);
 
+        //搜索
+        mSearchBtn = this.findViewById(R.id.search_btn);
     }
 
     @Override

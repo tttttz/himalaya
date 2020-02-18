@@ -1,5 +1,6 @@
 package com.example.himalaya.presenters;
 
+import com.example.himalaya.api.XimalayaApi;
 import com.example.himalaya.interfaces.IRecommendPresenter;
 import com.example.himalaya.interfaces.IRecommendViewCallback;
 import com.example.himalaya.utils.Constants;
@@ -20,6 +21,7 @@ public class RecommendPresenter implements IRecommendPresenter {
     private static final String TAG = "RecommendPresenter";
 
     private List<IRecommendViewCallback> mCallbacks = new ArrayList<>();
+    private List<Album> mCurrentRecommend = null;
 
     private RecommendPresenter(){
 
@@ -52,10 +54,8 @@ public class RecommendPresenter implements IRecommendPresenter {
         //获取推荐内容
         //封装参数
         updateLoading();
-        Map<String, String> map = new HashMap<>();
-        //这个参数表示一页数据返回多少条
-        map.put(DTransferConstants.LIKE_COUNT, Constants.COUNT_RECOMMEND + "");
-        CommonRequest.getGuessLikeAlbum(map, new IDataCallBack<GussLikeAlbumList>() {
+        XimalayaApi ximalayaApi = XimalayaApi.getInstance();
+        ximalayaApi.getRecommendList(new IDataCallBack<GussLikeAlbumList>() {
             @Override
             public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
                 //数据获取成功
@@ -109,8 +109,18 @@ public class RecommendPresenter implements IRecommendPresenter {
                 for (IRecommendViewCallback callback : mCallbacks) {
                     callback.onRecommendListLoad(albumList);
                 }
+                this.mCurrentRecommend = albumList;
             }
         }
+    }
+
+    /**
+     * 获取推荐专辑 使用之前要判空
+     *
+     * @return
+     */
+    public List<Album> getCurrentRecommend(){
+        return mCurrentRecommend;
     }
 
     /**
