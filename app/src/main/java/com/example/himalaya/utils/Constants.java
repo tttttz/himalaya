@@ -9,4 +9,7 @@ public class Constants {
     //默认请求列表数量
     public static int COUNT_DEFAULT = 50;
 
+    //默认热词数量
+    public static int COUNT_HOT_WORDS = 20;
+
 }
