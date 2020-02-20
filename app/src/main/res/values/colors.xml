@@ -10,4 +10,5 @@
     <color name="black">#000000</color>
     <color name="play_list_text_color">#7d828c</color>
     <color name="play_list_line_color">#eceef0</color>
+    <color name="sub_text_title_99">#aaefefef</color>
 </resources>

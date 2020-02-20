@@ -6,6 +6,22 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/result_list_view"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:visibility="gone"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_recommend_view"
+        android:overScrollMode="never"
+        android:visibility="gone"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <com.example.himalaya.views.FlowTextLayout
+        android:id="@+id/recommend_hot_word_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="10dp"/>
+
 
 </FrameLayout>

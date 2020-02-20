@@ -1,5 +1,7 @@
 package com.example.himalaya.presenters;
 
+import androidx.annotation.Nullable;
+
 import com.example.himalaya.api.XimalayaApi;
 import com.example.himalaya.interfaces.ISearchCallback;
 import com.example.himalaya.interfaces.ISearchPresenter;
@@ -118,20 +120,23 @@ public class SearchPresenter implements ISearchPresenter {
     }
 
     @Override
-    public void getRecommendWord(final String keyword) {
+    public void getRecommendWord(String keyword) {
         mXimalayaApi.getSuggestWord(keyword, new IDataCallBack<SuggestWords>() {
             @Override
-            public void onSuccess(SuggestWords suggestWords) {
+            public void onSuccess(@Nullable SuggestWords suggestWords) {
                 if (suggestWords != null) {
                     List<QueryResult> keyWordList = suggestWords.getKeyWordList();
-                    LogUtil.d(TAG, "keyWordList size -- >" + keyWordList.size());
+                    LogUtil.d(TAG, "keyWordList size -- > " + keyWordList.size());
+                    for (ISearchCallback iSearchCallback : mCallbacks) {
+                        iSearchCallback.onRecommendWordLoaded(keyWordList);
+                    }
                 }
             }
 
             @Override
             public void onError(int errorCode, String errorMsg) {
-                LogUtil.d(TAG, "getRecommendWord errorCode -- >" + errorCode);
-                LogUtil.d(TAG, "getRecommendWord errorMsg -- >" + errorMsg);
+                LogUtil.d(TAG, "getRecommendWord errorCode -- > " + errorCode);
+                LogUtil.d(TAG, "getRecommendWord errorMsg -- > " + errorMsg);
             }
         });
     }

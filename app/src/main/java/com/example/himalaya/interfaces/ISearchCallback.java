@@ -32,9 +32,9 @@ public interface ISearchCallback {
     /**
      * 获取推荐的联想词
      *
-     * @param keyWorkList
+     * @param keyWordList
      */
-    void onRecommendWordLoaded(List<QueryResult> keyWorkList);
+    void onRecommendWordLoaded(List<QueryResult> keyWordList);
 
     /**
      * 错误信息展示

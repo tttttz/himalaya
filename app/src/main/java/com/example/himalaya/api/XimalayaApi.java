@@ -90,12 +90,12 @@ public class XimalayaApi {
      * 根据关键字获取联想词
      *
      * @param keyword 关键字
-     * @param callBack 回调
+     * @param callback 回调
      */
-    public void getSuggestWord(String keyword, IDataCallBack<SuggestWords> callBack){
-        Map<String, String> map = new HashMap<String, String>();
+    public void getSuggestWord(String keyword, IDataCallBack<SuggestWords> callback){
+        Map<String, String> map = new HashMap<>();
         map.put(DTransferConstants.SEARCH_KEY, keyword);
-        CommonRequest.getSuggestWord(map, callBack);
+        CommonRequest.getSuggestWord(map, callback);
     }
 
 }
