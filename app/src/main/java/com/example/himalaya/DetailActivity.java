@@ -175,6 +175,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
         BezierLayout headerView = new BezierLayout(this);
         mRefreshLayout.setHeaderView(headerView);
         mRefreshLayout.setMaxHeadHeight(140);
+        mRefreshLayout.setOverScrollBottomShow(false);
         mRefreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override
             public void onRefresh(TwinklingRefreshLayout refreshLayout) {

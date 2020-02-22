@@ -1,5 +1,6 @@
 package com.example.himalaya.adapters;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +69,7 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.Inne
         notifyDataSetChanged();
     }
 
+
     public class InnerHolder extends RecyclerView.ViewHolder {
         public InnerHolder(@NonNull View itemView) {
             super(itemView);
@@ -92,8 +94,12 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.Inne
             albumPlayCountTv.setText(playCount + "万");
             albumContentCountTv.setText(album.getIncludeTrackCount() + "集");
             //使用Picasso设置专辑封面
-            Picasso.with(itemView.getContext()).load(album.getCoverUrlLarge()).into(albumCoverIv);
-            //notifyDataSetChanged();
+            String coverUrlLarge = album.getCoverUrlLarge();
+            if (!TextUtils.isEmpty(coverUrlLarge)) {
+                Picasso.with(itemView.getContext()).load(coverUrlLarge).into(albumCoverIv);
+            } else {
+                albumCoverIv.setImageResource(R.mipmap.ximalay_logo);
+            }
         }
     }
 
