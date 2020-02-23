@@ -193,7 +193,6 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
             @Override
             public void onLoadMore(TwinklingRefreshLayout refreshLayout) {
                 super.onLoadMore(refreshLayout);
-                //todo:去加载更多内容
                 if (mAlbumDetailPresenter != null) {
                     mAlbumDetailPresenter.loadMore();
                     mIsLoadMore = true;

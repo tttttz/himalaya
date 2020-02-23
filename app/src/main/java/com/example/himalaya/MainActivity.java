@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.himalaya.adapters.IndicatorAdapter;
 import com.example.himalaya.adapters.MainContentAdapter;
+import com.example.himalaya.data.XimalayaDBHelper;
 import com.example.himalaya.interfaces.IPlayerCallBack;
 import com.example.himalaya.presenters.PlayerPresenter;
 import com.example.himalaya.presenters.RecommendPresenter;
@@ -49,6 +50,8 @@ public class MainActivity extends FragmentActivity implements IPlayerCallBack {
         initView();
         initEvent();
         initPresenter();
+        XimalayaDBHelper ximalayaDBHelper = new XimalayaDBHelper(this);
+        ximalayaDBHelper.getWritableDatabase();
     }
 
     private void initPresenter() {
