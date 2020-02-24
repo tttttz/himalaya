@@ -34,12 +34,6 @@ public class XimalayaDBHelper extends SQLiteOpenHelper {
                 Constants.SUB_ALBUM_ID + " integer" +
                 ")";
         db.execSQL(subTbSql);
-        LogUtil.d(TAG,subTbSql);
-        String testSql = "insert into subTb(title,description) values('title','des')";
-        for (int i = 0; i < 10000; i++) {
-            db.execSQL(testSql);
-        }
-        LogUtil.d(TAG, testSql);
 /*        //创建历史记录表
         String historyTbSql = "create table " + Constants.HISTORY_TB_NAME + "(" +
                 Constants.HISTORY_ID + " integer primary key autoincrement, " +

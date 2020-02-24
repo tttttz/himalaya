@@ -17,6 +17,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     sourceSets {
         main {
             jniLibs.srcDirs = ['libs']
@@ -46,4 +51,6 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.3.2'
 
     implementation 'com.lcodecorex:tkrefreshlayout:1.0.7'
+
+    implementation "io.reactivex.rxjava3:rxjava:3.0.0"
 }

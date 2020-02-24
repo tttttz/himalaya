@@ -7,23 +7,25 @@ import java.util.List;
 public interface ISubDaoCallback {
 
     /**
-     * 调用添加时通知UI结果
+     * 添加的结果回调方法
      *
      * @param isSuccess
      */
     void onAddResult(boolean isSuccess);
 
+
     /**
-     * 删除订阅的回调方法
+     * 删除结果回调方法
      *
      * @param isSuccess
      */
-    void onDeleteResult(boolean isSuccess);
+    void onDelResult(boolean isSuccess);
+
 
     /**
-     * 订阅专辑加载结果的回调方法
+     * 加载的结果
      *
-     * @param albumList
+     * @param result
      */
-    void onSubListLoaded(List<Album> albumList);
+    void onSubListLoaded(List<Album> result);
 }
