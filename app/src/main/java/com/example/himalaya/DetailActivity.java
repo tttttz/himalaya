@@ -81,7 +81,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
         initView();
         initPresenter();
-        updateSubState();
+        //updateSubState();
         updatePlayState(mPlayerPresenter.isPlaying());
         initListener();
     }
@@ -474,6 +474,8 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     @Override
     public void onSubscriptionsLoaded(List<Album> albums) {
+        //在这个回调中调用updateSubState方法即可，因为这个回调方法调用时数据已经查到了。
+        updateSubState();
         for (Album album : albums) {
             LogUtil.d(TAG, "TZ album -- >" + album.getAlbumTitle());
         }

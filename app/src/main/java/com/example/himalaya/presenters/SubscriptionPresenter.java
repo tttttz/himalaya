@@ -97,6 +97,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
     public boolean isSub(Album album) {
         Album result = mData.get(album.getId());
         LogUtil.d(TAG, "TZ find result -- >" + result + "");
+        LogUtil.d(TAG, "TZ find mdata size in isSub -- >" + mData.size());
         //不为空，表示已经订阅
         return result != null;
     }
@@ -147,6 +148,7 @@ public class SubscriptionPresenter implements ISubscriptionPresenter, ISubDaoCal
     public void onSubListLoaded(final List<Album> result) {
         //加载数据的回调
         mData.clear();
+        LogUtil.d(TAG, "TZ onSubListLoaded  before loaded -- >" + result.size());
         for (Album album : result) {
             mData.put(album.getId(), album);
         }
