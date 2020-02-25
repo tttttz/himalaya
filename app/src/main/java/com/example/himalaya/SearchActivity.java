@@ -8,7 +8,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -27,7 +26,6 @@ import com.example.himalaya.base.BaseActivity;
 import com.example.himalaya.interfaces.ISearchCallback;
 import com.example.himalaya.presenters.AlbumDetailPresenter;
 import com.example.himalaya.presenters.SearchPresenter;
-import com.example.himalaya.utils.Constants;
 import com.example.himalaya.utils.LogUtil;
 import com.example.himalaya.views.FlowTextLayout;
 import com.example.himalaya.views.UILoader;
@@ -94,7 +92,7 @@ public class SearchActivity extends BaseActivity implements ISearchCallback, Alb
 
     private void initEvent() {
 
-        mAlbumListAdapter.setOnRecommendItemClickListener(this);
+        mAlbumListAdapter.setOnAlbumItemClickListener(this);
 
         mRefreshLayout.setOnRefreshListener(new RefreshListenerAdapter() {
             @Override

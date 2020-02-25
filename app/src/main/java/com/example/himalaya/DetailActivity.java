@@ -28,6 +28,7 @@ import com.example.himalaya.interfaces.ISubscriptionPresenter;
 import com.example.himalaya.presenters.AlbumDetailPresenter;
 import com.example.himalaya.presenters.PlayerPresenter;
 import com.example.himalaya.presenters.SubscriptionPresenter;
+import com.example.himalaya.utils.Constants;
 import com.example.himalaya.utils.ImageBlur;
 import com.example.himalaya.utils.LogUtil;
 import com.example.himalaya.views.RoundRectImageView;
@@ -321,7 +322,10 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
             });
         }
         if (mSmallCover != null) {
-            Picasso.with(this).load(album.getCoverUrlSmall()).into(mSmallCover);
+            LogUtil.d(TAG, "mSmallCover title -- >" + album.getAlbumTitle());
+            LogUtil.d(TAG, "mSmallCover url small -- >" + album.getCoverUrlSmall());
+            LogUtil.d(TAG, "mSmallCover url large -- >" + album.getCoverUrlLarge());
+            Picasso.with(this).load(album.getCoverUrlSmall() == null ? album.getCoverUrlLarge() : album.getCoverUrlSmall()).into(mSmallCover);
         }
     }
 
@@ -483,7 +487,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
 
     @Override
     public void onSubFull() {
-
+        Toast.makeText(this, "最多订阅"+ Constants.MAX_SUB_COUNT +"个专辑", Toast.LENGTH_SHORT).show();
     }
 
 }
