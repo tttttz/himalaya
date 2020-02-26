@@ -5,6 +5,7 @@ import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,26 +14,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.himalaya.DetailActivity;
 import com.example.himalaya.R;
 import com.example.himalaya.adapters.AlbumListAdapter;
+import com.example.himalaya.base.BaseApplication;
 import com.example.himalaya.base.BaseFragment;
 import com.example.himalaya.interfaces.ISubscriptionCallback;
 import com.example.himalaya.interfaces.ISubscriptionPresenter;
 import com.example.himalaya.presenters.AlbumDetailPresenter;
 import com.example.himalaya.presenters.SubscriptionPresenter;
 import com.example.himalaya.utils.LogUtil;
+import com.example.himalaya.views.ConfirmDialog;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
 import net.lucode.hackware.magicindicator.buildins.UIUtil;
 
-import java.util.Collections;
 import java.util.List;
 
-public class SubscriptionFragment extends BaseFragment implements ISubscriptionCallback, AlbumListAdapter.OnRecommendItemClickListener {
+public class SubscriptionFragment extends BaseFragment implements ISubscriptionCallback, AlbumListAdapter.OnAlbumItemClickListener, AlbumListAdapter.OnAlbumItemLongClickListener, ConfirmDialog.OnDialogActionClickListener {
 
     private static final String TAG = "SubscriptionFragment";
     private ISubscriptionPresenter mSubscriptionPresenter;
     private RecyclerView mSubListView;
     private AlbumListAdapter mAlbumListAdapter;
+    private Album mCurrentClickAlbum = null;
 
     @Override
     protected View onSubViewLoad(LayoutInflater layoutInflater, ViewGroup container) {
@@ -44,6 +47,7 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
         mSubListView.setLayoutManager(new LinearLayoutManager(container.getContext()));
         mAlbumListAdapter = new AlbumListAdapter();
         mAlbumListAdapter.setOnAlbumItemClickListener(this);
+        mAlbumListAdapter.setOnAlbumItemLongClickListener(this);
         mSubListView.setAdapter(mAlbumListAdapter);
         mSubListView.addItemDecoration(new RecyclerView.ItemDecoration() {
             @Override
@@ -67,7 +71,8 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
 
     @Override
     public void onDeleteResult(boolean isSuccess) {
-
+        //给出取消订阅的提示
+        Toast.makeText(BaseApplication.getAppContext(), isSuccess ? R.string.cancel_sub_success : R.string.cancel_sub_failed, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -101,5 +106,28 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
         //item（条目）被点击，跳转到详情页面
         Intent intent = new Intent(getContext(), DetailActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onItemLongClick(Album album) {
+        this.mCurrentClickAlbum = album;
+        //订阅的item被长按
+        //Toast.makeText(BaseApplication.getAppContext(), "订阅专辑被长按...", Toast.LENGTH_SHORT).show();
+        ConfirmDialog confirmDialog = new ConfirmDialog(getActivity());
+        confirmDialog.setOnDialogActionClickListener(this);
+        confirmDialog.show();
+    }
+
+    @Override
+    public void onCancelSubClick() {
+        //取消订阅
+        if (mCurrentClickAlbum != null && mSubscriptionPresenter != null) {
+            mSubscriptionPresenter.deleteSubscription(mCurrentClickAlbum);
+        }
+    }
+
+    @Override
+    public void onGiveUpClick() {
+        //放弃取消
     }
 }
