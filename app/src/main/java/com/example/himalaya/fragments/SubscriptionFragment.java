@@ -5,6 +5,8 @@ import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,7 @@ import com.example.himalaya.presenters.AlbumDetailPresenter;
 import com.example.himalaya.presenters.SubscriptionPresenter;
 import com.example.himalaya.utils.LogUtil;
 import com.example.himalaya.views.ConfirmDialog;
+import com.example.himalaya.views.UILoader;
 import com.lcodecore.tkrefreshlayout.TwinklingRefreshLayout;
 import com.ximalaya.ting.android.opensdk.model.album.Album;
 
@@ -36,15 +39,44 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
     private RecyclerView mSubListView;
     private AlbumListAdapter mAlbumListAdapter;
     private Album mCurrentClickAlbum = null;
+    private UILoader mUiLoader;
 
     @Override
     protected View onSubViewLoad(LayoutInflater layoutInflater, ViewGroup container) {
-        View rootView = layoutInflater.inflate(R.layout.fragment_subscription, container, false);
-        TwinklingRefreshLayout refreshLayout = rootView.findViewById(R.id.over_scroll_view);
+        FrameLayout rootView = (FrameLayout) layoutInflater.inflate(R.layout.fragment_subscription, container, false);
+        if (mUiLoader == null) {
+            mUiLoader = new UILoader(container.getContext()) {
+                @Override
+                protected View getSuccessView(ViewGroup container) {
+                    return createSuccessView();
+                }
+
+                @Override
+                protected View getEmptyView() {
+                    //创建新的UI
+                    View emptyView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_empty_view, this, false);
+                    TextView tipsView = emptyView.findViewById(R.id.empty_view_tips_tv);
+                    tipsView.setText(R.string.no_sub_content_tips_text);
+                    return emptyView;
+                }
+            };
+            if (mUiLoader.getParent() instanceof ViewGroup) {
+                ((ViewGroup) mUiLoader.getParent()).removeView(mUiLoader);
+            }
+            rootView.addView(mUiLoader);
+        }
+
+
+        return rootView;
+    }
+
+    private View createSuccessView() {
+        View itemView = LayoutInflater.from(BaseApplication.getAppContext()).inflate(R.layout.item_subscription, null);
+        TwinklingRefreshLayout refreshLayout = itemView.findViewById(R.id.over_scroll_view);
         refreshLayout.setEnableLoadmore(false);
         refreshLayout.setEnableRefresh(false);
-        mSubListView = rootView.findViewById(R.id.sub_list);
-        mSubListView.setLayoutManager(new LinearLayoutManager(container.getContext()));
+        mSubListView = itemView.findViewById(R.id.sub_list);
+        mSubListView.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
         mAlbumListAdapter = new AlbumListAdapter();
         mAlbumListAdapter.setOnAlbumItemClickListener(this);
         mAlbumListAdapter.setOnAlbumItemLongClickListener(this);
@@ -61,7 +93,10 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
         mSubscriptionPresenter = SubscriptionPresenter.getInstance();
         mSubscriptionPresenter.registerViewCallback(this);
         mSubscriptionPresenter.getSubscriptionList();
-        return rootView;
+        if (mUiLoader != null) {
+            mUiLoader.updateStatus(UILoader.UIStatus.LOADING);
+        }
+        return itemView;
     }
 
     @Override
@@ -77,10 +112,20 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
 
     @Override
     public void onSubscriptionsLoaded(List<Album> albums) {
+        if (albums.size() == 0) {
+            if (mUiLoader != null) {
+                mUiLoader.updateStatus(UILoader.UIStatus.EMPTY);
+            }
+        } else {
+            if (mUiLoader != null) {
+                mUiLoader.updateStatus(UILoader.UIStatus.SUCCESS);
+            }
+        }
         //更新UI
         if (mAlbumListAdapter != null) {
             mAlbumListAdapter.setData(albums);
         }
+
     }
 
     @Override
