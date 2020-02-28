@@ -20,7 +20,7 @@ public class Constants {
     public static final int DB_VERSION_CODE = 2;
 
     //订阅的表名
-    public static final String SUB_TB_NAME = "subTb";
+    public static final String SUB_TB_NAME = "tb_subscription";
     public static final String SUB_ID = "_id";
     public static final String SUB_COVER_URL = "coverUrl";
     public static final String SUB_TITLE = "title";

@@ -107,6 +107,8 @@ public class SubscriptionDao implements ISubDao {
                 //封面图片
                 String coverUrl = query.getString(query.getColumnIndex(Constants.SUB_COVER_URL));
                 album.setCoverUrlLarge(coverUrl);
+                album.setCoverUrlMiddle(coverUrl);
+                album.setCoverUrlSmall(coverUrl);
                 //
                 String title = query.getString(query.getColumnIndex(Constants.SUB_TITLE));
                 album.setAlbumTitle(title);

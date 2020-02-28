@@ -325,7 +325,7 @@ public class DetailActivity extends BaseActivity implements IAlbumDetailViewCall
             LogUtil.d(TAG, "mSmallCover title -- >" + album.getAlbumTitle());
             LogUtil.d(TAG, "mSmallCover url small -- >" + album.getCoverUrlSmall());
             LogUtil.d(TAG, "mSmallCover url large -- >" + album.getCoverUrlLarge());
-            Picasso.with(this).load(album.getCoverUrlSmall() == null ? album.getCoverUrlLarge() : album.getCoverUrlSmall()).into(mSmallCover);
+            Picasso.with(this).load(album.getCoverUrlSmall()).into(mSmallCover);
         }
     }
 

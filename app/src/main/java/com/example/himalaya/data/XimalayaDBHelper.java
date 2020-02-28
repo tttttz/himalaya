@@ -34,7 +34,7 @@ public class XimalayaDBHelper extends SQLiteOpenHelper {
                 Constants.SUB_ALBUM_ID + " integer" +
                 ")";
         db.execSQL(subTbSql);
-/*        //创建历史记录表
+        //创建历史记录表
         String historyTbSql = "create table " + Constants.HISTORY_TB_NAME + "(" +
                 Constants.HISTORY_ID + " integer primary key autoincrement, " +
                 Constants.HISTORY_TRACK_ID + " integer, " +
@@ -45,7 +45,7 @@ public class XimalayaDBHelper extends SQLiteOpenHelper {
                 Constants.HISTORY_AUTHOR + " varchar," +
                 Constants.HISTORY_UPDATE_TIME + " integer" +
                 ")";
-        db.execSQL(historyTbSql);*/
+        db.execSQL(historyTbSql);
     }
 
     @Override
