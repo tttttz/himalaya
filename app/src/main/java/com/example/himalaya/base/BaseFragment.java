@@ -16,11 +16,11 @@ public abstract class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mRootView = onSubViewLoad(inflater, container);
+        mRootView = onSubViewLoaded(inflater, container);
         return mRootView;
     }
 
 
 
-    protected abstract View onSubViewLoad(LayoutInflater layoutInflater, ViewGroup container);
+    protected abstract View onSubViewLoaded(LayoutInflater layoutInflater, ViewGroup container);
 }

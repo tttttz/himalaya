@@ -25,7 +25,7 @@ public interface IHistoryDaoCallback {
      *
      * @param tracks
      */
-    void onHistoryLoaded(List<Track> tracks);
+    void onHistoriesLoaded(List<Track> tracks);
 
     /**
      * 历史内容清除结果

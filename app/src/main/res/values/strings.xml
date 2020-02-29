@@ -24,4 +24,5 @@
     <string name="cancel_sub_failed">取消订阅失败</string>
     <string name="no_sub_content_tips_text">没有订阅内容，赶紧去订阅吧~</string>
     <string name="no_search_content_tips_text">没有相关内容</string>
+    <string name="no_history_content_tips_text">没有历史记录~</string>
 </resources>

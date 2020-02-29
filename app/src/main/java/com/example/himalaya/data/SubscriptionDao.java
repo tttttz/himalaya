@@ -13,6 +13,7 @@ import com.ximalaya.ting.android.opensdk.model.album.Announcer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 public class SubscriptionDao implements ISubDao {
 
@@ -20,6 +21,7 @@ public class SubscriptionDao implements ISubDao {
     private static final String TAG = "SubscriptionDao";
     private final XimalayaDBHelper mXimalayaDBHelper;
     private ISubDaoCallback mCallback = null;
+
 
     public static SubscriptionDao getInstance() {
         return ourInstance;

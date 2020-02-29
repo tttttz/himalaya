@@ -9,6 +9,6 @@ public interface IHistoryCallback {
      * 历史内容家在结果
      * @param tracks
      */
-    void onHistoryLoaded(List<Track> tracks);
+    void onHistoriesLoaded(List<Track> tracks);
 
 }

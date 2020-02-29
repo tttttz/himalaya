@@ -42,7 +42,7 @@ public class SubscriptionFragment extends BaseFragment implements ISubscriptionC
     private UILoader mUiLoader;
 
     @Override
-    protected View onSubViewLoad(LayoutInflater layoutInflater, ViewGroup container) {
+    protected View onSubViewLoaded(LayoutInflater layoutInflater, ViewGroup container) {
         FrameLayout rootView = (FrameLayout) layoutInflater.inflate(R.layout.fragment_subscription, container, false);
         if (mUiLoader == null) {
             mUiLoader = new UILoader(container.getContext()) {

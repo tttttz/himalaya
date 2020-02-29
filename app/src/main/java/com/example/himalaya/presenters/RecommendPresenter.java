@@ -17,6 +17,7 @@ public class RecommendPresenter implements IRecommendPresenter {
 
     private List<IRecommendViewCallback> mCallbacks = new ArrayList<>();
     private List<Album> mCurrentRecommend = null;
+    private List<Album> mRecommendList;
 
     private RecommendPresenter(){
 
@@ -46,6 +47,11 @@ public class RecommendPresenter implements IRecommendPresenter {
      */
     @Override
     public void getRecommendList() {
+        //如果内容不为空，则直接使用当前内容
+        if (mRecommendList != null && mRecommendList.size() > 0) {
+            handlerRecommendResult(mRecommendList);
+            return;
+        }
         //获取推荐内容
         //封装参数
         updateLoading();
@@ -55,10 +61,10 @@ public class RecommendPresenter implements IRecommendPresenter {
             public void onSuccess(GussLikeAlbumList gussLikeAlbumList) {
                 //数据获取成功
                 if (gussLikeAlbumList != null) {
-                    List<Album> albumList = gussLikeAlbumList.getAlbumList();
+                    mRecommendList = gussLikeAlbumList.getAlbumList();
                     //数据回来后要更新UI
                     //updateRecommendUI(albumList);
-                    handlerRecommendResult(albumList);
+                    handlerRecommendResult(mRecommendList);
                 }
             }
 

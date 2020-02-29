@@ -381,6 +381,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
 
     @Override
     public void onProgressChange(int currentDuration, int total) {
+
         mDurationBar.setMax(total);
         //更新播放进度 更新进度条
         String totalDuration;
@@ -392,6 +393,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerCallBack, Vie
             totalDuration = mMinForMat.format(total);
             currentPosition = mMinForMat.format(currentDuration);
         }
+        LogUtil.d(TAG, "currentDuration -- >" + currentPosition);
+        LogUtil.d(TAG, "total -- >" + totalDuration);
         if (mTotalDuration != null) {
             mTotalDuration.setText(totalDuration);
         }

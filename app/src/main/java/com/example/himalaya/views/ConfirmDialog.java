@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import com.example.himalaya.R;
 
@@ -58,7 +57,7 @@ public class ConfirmDialog extends Dialog {
 
     private void initView() {
         mCancelSub = this.findViewById(R.id.dialog_cancel_sub_tv);
-        mGiveUp = this.findViewById(R.id.dialog_give_up_tv);
+        mGiveUp = this.findViewById(R.id.dialog_check_box_confirm);
     }
 
     public void setOnDialogActionClickListener(OnDialogActionClickListener listener){

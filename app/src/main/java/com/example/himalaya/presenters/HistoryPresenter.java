@@ -142,18 +142,19 @@ public class HistoryPresenter implements IHistoryPresenter, IHistoryDaoCallback 
     }
 
     @Override
-    public void onHistoryLoaded(final List<Track> tracks) {
+    public void onHistoriesLoaded(List<Track> tracks) {
         this.mCurrentHistories = tracks;
         LogUtil.d(TAG, "history size-->" + tracks.size());
         BaseApplication.getHandler().post(new Runnable() {
             @Override
             public void run() {
                 for (IHistoryCallback callback : mCallbacks) {
-                    callback.onHistoryLoaded(tracks);
+                    callback.onHistoriesLoaded(tracks);
                 }
             }
         });
     }
+
 
     @Override
     public void onHistoriesClean(boolean isSuccess) {

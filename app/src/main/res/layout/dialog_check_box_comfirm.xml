@@ -4,18 +4,30 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
-        android:layout_width="240dp"
-        android:layout_height="140dp"
+        android:layout_width="300dp"
+        android:layout_height="180dp"
         android:background="@drawable/shape_confirm_dialog_bg"
         android:layout_centerInParent="true">
 
         <TextView
+            android:id="@+id/dialog_tips_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="取消订阅该专辑吗？"
+            android:text="删除当前历史记录吗？"
             android:layout_marginTop="30dp"
             android:layout_centerHorizontal="true"
-            android:textSize="20sp"/>
+            android:textSize="22sp"/>
+
+        <CheckBox
+            android:id="@+id/dialog_check_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="清除所有历史记录"
+            android:textColor="@color/play_list_text_color"
+            android:layout_below="@+id/dialog_tips_text"
+            android:layout_marginTop="10dp"
+            android:textSize="18sp"
+            android:layout_centerHorizontal="true"/>
 
         <LinearLayout
             android:id="@+id/dialog_button_container"
@@ -25,12 +37,12 @@
             android:layout_alignParentBottom="true">
 
             <TextView
-                android:id="@+id/dialog_cancel_sub_tv"
+                android:id="@+id/dialog_check_box_cancel"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:layout_height="match_parent"
-                android:text="取消订阅"
+                android:text="取消"
                 android:textSize="20sp"
                 android:textColor="#c5c0c0"/>
 
@@ -45,7 +57,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:layout_height="match_parent"
-                android:text="我再想想"
+                android:text="确定"
                 android:textColor="@color/main_color"
                 android:textSize="20sp"/>
 

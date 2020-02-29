@@ -65,7 +65,7 @@ public class MainActivity extends FragmentActivity implements IPlayerCallBack {
             public void onTagClick(int index) {
                 LogUtil.d(TAG, "click index is -->" + index);
                 if (mContentPager != null) {
-                    mContentPager.setCurrentItem(index);
+                    mContentPager.setCurrentItem(index, false);
                 }
             }
         });
